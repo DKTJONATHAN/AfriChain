@@ -1670,9 +1670,7 @@
     color: var(--secondary);
 }
     </style>
- <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
+
 </head>
 <body>
     <!-- Header -->
@@ -2178,7 +2176,29 @@
 </div>
 
     <!-- JavaScript -->
-  <script>// Firebase Configuration
+    <!-- Firebase SDK -->
+<script defer src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
+
+<!-- Your main script -->
+<script>
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyB5IocPCGZ7M8R2FmEnR3W7ESZrjE2-zsE",
+    authDomain: "africhainkenya.firebaseapp.com",
+    projectId: "africhainkenya",
+    storageBucket: "africhainkenya.firebasestorage.app",
+    messagingSenderId: "769906450985",
+    appId: "1:769906450985:web:36f46a9c54fb4317abb238",
+    measurementId: "G-RNZ05CXR9M"
+};
+// ... rest of your script ...
+</script>
+</body>
+</html>
+
+  <script>
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyB5IocPCGZ7M8R2FmEnR3W7ESZrjE2-zsE",
     authDomain: "africhainkenya.firebaseapp.com",
@@ -2189,14 +2209,27 @@ const firebaseConfig = {
     measurementId: "G-RNZ05CXR9M"
 };
 
-// Initialize Firebase
-try {
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    console.log('Firebase initialized');
-} catch (error) {
-    console.error('Firebase initialization error:', error);
+// Initialize Firebase with retry logic
+function initializeFirebase() {
+    if (typeof firebase === 'undefined') {
+        console.warn('Firebase SDK not loaded yet, retrying in 500ms...');
+        setTimeout(initializeFirebase, 500);
+        return;
+    }
+    try {
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        console.log('Firebase initialized successfully');
+    } catch (error) {
+        console.error('Firebase initialization error:', error);
+    }
 }
+
+// Call initialization after DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, attempting Firebase initialization');
+    initializeFirebase();
+});
 
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
