@@ -2056,19 +2056,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
 
     <!-- Main Script -->
-    <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyB5IocPCGZ7M8R2FmEnR3W7ESZrjE2-zsE",
-            authDomain: "africhainkenya.firebaseapp.com",
-            projectId: "africhainkenya",
-            storageBucket: "africhainkenya.firebasestorage.app",
-            messagingSenderId: "769906450985",
-            appId: "1:769906450985:web:36f46a9c54fb4317abb238",
-            measurementId: "G-RNZ05CXR9M"
-        };
-
-        // Initialize Firebase
+  <script>
+    // Load Firebase Config Dynamically
+    const script = document.createElement('script');
+    script.src = 'firebase-config.js';
+    script.async = true;
+    script.onload = () => {
+        // Initialize Firebase after config is loaded
         let auth = null;
         try {
             firebase.initializeApp(firebaseConfig);
@@ -2079,372 +2073,340 @@
             alert('Error initializing Firebase. Please try again later.');
         }
 
-        // DOM Elements
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        const signInBtn = document.getElementById('signInBtn');
-        const signUpBtn = document.getElementById('signUpBtn');
-        const connectWalletBtn = document.getElementById('connectWalletBtn');
-        const floatingWalletBtn = document.getElementById('connectWallet');
-        const signupModal = document.getElementById('signupModal');
-        const loginModal = document.getElementById('loginModal');
-        const walletModal = document.getElementById('walletModal');
-        const showLogin = document.getElementById('showLogin');
-        const showSignup = document.getElementById('showSignup');
-        const closeBtns = document.querySelectorAll('.close-btn');
-        const userDropdown = document.getElementById('userDropdown');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const profileLink = document.getElementById('profileLink');
-        const walletOptions = document.querySelectorAll('.wallet-option');
-        const walletStatus = document.getElementById('walletStatus');
-        const signupForm = document.getElementById('signupForm');
-        const loginForm = document.getElementById('loginForm');
-        const googleSignup = document.getElementById('googleSignup');
-        const googleLogin = document.getElementById('googleLogin');
-        const contactForm = document.getElementById('contactForm');
-        const newsletterForm = document.querySelector('.newsletter-form');
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            const signInBtn = document.getElementById('signInBtn');
+            const signUpBtn = document.getElementById('signUpBtn');
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            const floatingWalletBtn = document.getElementById('connectWallet');
+            const signupModal = document.getElementById('signupModal');
+            const loginModal = document.getElementById('loginModal');
+            const walletModal = document.getElementById('walletModal');
+            const showLogin = document.getElementById('showLogin');
+            const showSignup = document.getElementById('showSignup');
+            const closeBtns = document.querySelectorAll('.close-btn');
+            const userDropdown = document.getElementById('userDropdown');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const profileLink = document.getElementById('profileLink');
+            const walletOptions = document.querySelectorAll('.wallet-option');
+            const walletStatus = document.getElementById('walletStatus');
+            const signupForm = document.getElementById('signupForm');
+            const loginForm = document.getElementById('loginForm');
+            const googleSignup = document.getElementById('googleSignup');
+            const googleLogin = document.getElementById('googleLogin');
+            const contactForm = document.getElementById('contactForm');
+            const newsletterForm = document.querySelector('.newsletter-form');
 
-        // Mobile Menu Toggle
-        if (mobileMenuBtn && navLinks) {
-            mobileMenuBtn.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-                mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-                    ? '<i class="fas fa-times"></i>' 
-                    : '<i class="fas fa-bars"></i>';
-                console.log('Mobile menu toggled:', navLinks.classList.contains('active') ? 'Opened' : 'Closed');
-            });
-        } else {
-            console.error('Mobile menu elements not found');
-        }
+            // Modal Handling
+            function closeAllModals() {
+                [signupModal, loginModal, walletModal].forEach(modal => {
+                    if (modal) modal.style.display = 'none';
+                });
+                if (userDropdown) userDropdown.style.display = 'none';
+                console.log('All modals closed');
+            }
 
-        // Smooth Scrolling for Anchor Links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                    if (navLinks.classList.contains('active')) {
-                        navLinks.classList.remove('active');
-                        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    }
-                    const dashboard = document.getElementById('dashboard');
-                    if (dashboard && targetId === '#dashboard' && isLoggedIn()) {
-                        dashboard.style.display = 'block';
-                        document.querySelectorAll('.section:not(#dashboard)').forEach(section => {
-                            section.style.display = 'block';
-                        });
-                    } else if (dashboard) {
-                        dashboard.style.display = 'none';
-                    }
-                    console.log('Navigated to:', targetId);
+            function openModal(modal) {
+                if (modal) {
+                    closeAllModals();
+                    modal.style.display = 'block';
+                    console.log(`Opened modal: ${modal.id}`);
                 } else {
-                    console.error('Target element not found:', targetId);
+                    console.error('Modal is undefined');
+                }
+            }
+
+            // Sign In Button
+            if (signInBtn) {
+                signInBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (isLoggedIn()) {
+                        userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                        console.log('Toggled user dropdown');
+                    } else {
+                        openModal(loginModal);
+                    }
+                });
+            }
+
+            // Sign Up Button
+            if (signUpBtn) {
+                signUpBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openModal(signupModal);
+                });
+            }
+
+            // Connect Wallet Buttons
+            function handleWalletConnect(e) {
+                e.preventDefault();
+                openModal(walletModal);
+                if (walletStatus) {
+                    walletStatus.textContent = 'Select a wallet to connect';
+                    walletStatus.className = 'wallet-status';
+                    console.log('Wallet modal opened');
+                }
+            }
+
+            if (connectWalletBtn) {
+                connectWalletBtn.addEventListener('click', handleWalletConnect);
+            }
+
+            if (floatingWalletBtn) {
+                floatingWalletBtn.addEventListener('click', handleWalletConnect);
+            }
+
+            // Close Modals
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeAllModals();
+                    console.log('Modal closed via close button');
+                });
+            });
+
+            // Close Modal on Outside Click
+            window.addEventListener('click', (e) => {
+                if (e.target === signupModal || e.target === loginModal || e.target === walletModal) {
+                    closeAllModals();
+                    console.log('Modal closed via outside click');
                 }
             });
-        });
 
-        // Modal Handling
-        function closeAllModals() {
-            [signupModal, loginModal, walletModal].forEach(modal => {
-                if (modal) modal.style.display = 'none';
-            });
-            if (userDropdown) userDropdown.style.display = 'none';
-            console.log('All modals closed');
-        }
-
-        function openModal(modal) {
-            closeAllModals();
-            if (modal) {
-                modal.style.display = 'block';
-                console.log(`Opened modal: ${modal.id}`);
-            } else {
-                console.error('Modal is undefined');
-            }
-        }
-
-        // Sign In Button
-        if (signInBtn) {
-            signInBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (isLoggedIn()) {
-                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
-                    console.log('Toggled user dropdown');
-                } else {
+            // Toggle Between Sign Up and Sign In Modals
+            if (showLogin) {
+                showLogin.addEventListener('click', (e) => {
+                    e.preventDefault();
                     openModal(loginModal);
+                });
+            }
+
+            if (showSignup) {
+                showSignup.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openModal(signupModal);
+                });
+            }
+
+            // User Authentication State
+            let currentUser = null;
+
+            function isLoggedIn() {
+                return currentUser !== null;
+            }
+
+            function updateUIForUser(user) {
+                currentUser = user;
+                if (user) {
+                    if (signInBtn) signInBtn.style.display = 'none';
+                    if (signUpBtn) signUpBtn.style.display = 'none';
+                    if (userDropdown) {
+                        const userName = user.displayName || user.email.split('@')[0];
+                        document.getElementById('userName').textContent = userName;
+                        document.getElementById('userInitial').textContent = userName.charAt(0).toUpperCase();
+                        document.getElementById('dashboardName').textContent = userName;
+                        document.getElementById('dashboardEmail').textContent = user.email;
+                        console.log('User logged in:', userName);
+                    }
+                } else {
+                    if (signInBtn) signInBtn.style.display = 'inline-block';
+                    if (signUpBtn) signUpBtn.style.display = 'inline-block';
+                    if (userDropdown) userDropdown.style.display = 'none';
+                    console.log('No user logged in');
+                }
+            }
+
+            // Firebase Auth State Listener
+            if (auth) {
+                auth.onAuthStateChanged(user => {
+                    updateUIForUser(user);
+                    const dashboard = document.getElementById('dashboard');
+                    if (dashboard) {
+                        dashboard.style.display = user ? 'block' : 'none';
+                    }
+                });
+            }
+
+            // Sign Up Form Submission
+            if (signupForm) {
+                signupForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('signupEmail').value;
+                    const password = document.getElementById('signupPassword').value;
+                    const name = document.getElementById('signupName').value;
+
+                    try {
+                        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                        await userCredential.user.updateProfile({ displayName: name });
+                        closeAllModals();
+                        alert('Sign up successful! Welcome to AfriChain.');
+                        console.log('User signed up:', email);
+                    } catch (error) {
+                        alert(`Sign up failed: ${error.message}`);
+                        console.error('Sign up error:', error);
+                    }
+                });
+            }
+
+            // Sign In Form Submission
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+
+                    try {
+                        await auth.signInWithEmailAndPassword(email, password);
+                        closeAllModals();
+                        alert('Sign in successful!');
+                        console.log('User signed in:', email);
+                    } catch (error) {
+                        alert(`Sign in failed: ${error.message}`);
+                        console.error('Sign in error:', error);
+                    }
+                });
+            }
+
+            // Google Sign Up/Login
+            if (googleSignup && googleLogin) {
+                const provider = new firebase.auth.GoogleAuthProvider();
+
+                googleSignup.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await auth.signInWithPopup(provider);
+                        closeAllModals();
+                        alert('Signed up with Google successfully!');
+                        console.log('Google sign up successful');
+                    } catch (error) {
+                        alert(`Google sign up failed: ${error.message}`);
+                        console.error('Google sign up error:', error);
+                    }
+                });
+
+                googleLogin.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await auth.signInWithPopup(provider);
+                        closeAllModals();
+                        alert('Signed in with Google successfully!');
+                        console.log('Google sign in successful');
+                    } catch (error) {
+                        alert(`Google sign up failed: ${error.message}`);
+                        console.error('Google sign in error:', error);
+                    }
+                });
+            }
+
+            // Logout
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await auth.signOut();
+                        closeAllModals();
+                        alert('Logged out successfully.');
+                        console.log('User logged out');
+                    } catch (error) {
+                        alert(`Logout failed: ${error.message}`);
+                        console.error('Logout error:', error);
+                    }
+                });
+            }
+
+            // Wallet Connection Simulation
+            walletOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const walletType = option.dataset.wallet;
+                    walletStatus.textContent = `Connecting to ${walletType}...`;
+                    walletStatus.className = 'wallet-status';
+
+                    setTimeout(() => {
+                        // Simulate wallet connection
+                        const success = Math.random() > 0.2; // 80% success rate for demo
+                        if (success) {
+                            walletStatus.textContent = `Connected to ${walletType}!`;
+                            walletStatus.className = 'wallet-status success';
+                            console.log(`Wallet connected: ${walletType}`);
+                            setTimeout(() => closeAllModals(), 1500);
+                        } else {
+                            walletStatus.textContent = `Failed to connect to ${walletType}. Please try again.`;
+                            walletStatus.className = 'wallet-status error';
+                            console.error(`Wallet connection failed: ${walletType}`);
+                        }
+                    }, 1000);
+                });
+            });
+
+            // Contact Form Submission
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+
+                    // Simulate form submission
+                    console.log('Contact form submitted:', { name, email, subject, message });
+                    alert('Message sent successfully! We will get back to you soon.');
+                    contactForm.reset();
+                });
+            }
+
+            // Newsletter Form Submission
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = newsletterForm.querySelector('input').value;
+                    console.log('Newsletter subscription:', email);
+                    alert('Subscribed successfully! Thank you for joining our newsletter.');
+                    newsletterForm.reset();
+                });
+            }
+
+            // Social Links
+            document.querySelectorAll('.social-links a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (!link.href || link.href === '#') {
+                        e.preventDefault();
+                        console.log('Social link placeholder clicked:', link.querySelector('i').className);
+                        alert('This social link is a placeholder. Please update with a valid URL.');
+                    } else {
+                        console.log('Navigating to social link:', link.href);
+                    }
+                });
+            });
+
+            // Particle Background Animation
+            const particleBg = document.querySelectorAll('.particle-bg');
+            particleBg.forEach(bg => {
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.width = `${Math.random() * 3 + 1}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                    bg.appendChild(particle);
                 }
             });
-        }
 
-        // Sign Up Button
-        if (signUpBtn) {
-            signUpBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                openModal(signupModal);
-            });
-        }
-
-        // Connect Wallet Buttons
-        function handleWalletConnect(e) {
-            e.preventDefault();
-            openModal(walletModal);
-            if walletStatus) {
-                walletStatus.textContent = 'Select a wallet to connect';
-                walletStatus.className = 'wallet-status';
-                console.log('Wallet modal opened');
-            }
-        }
-    if (connectWalletBtn) {
-        connectWalletBtn.addEventListener('click', handleWalletConnect);
-    }
-
-    if (floatingWalletBtn) {
-        floatingWalletBtn.addEventListener('click', handleWalletConnect);
-    }
-
-    // Close Modals
-    closeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            closeAllModals();
-            console.log('Modal closed via close button');
-        });
-    });
-
-    // Close Modal on Outside Click
-    window.addEventListener('click', (e) => {
-        if (e.target === signupModal || e.target === loginModal || e.target === walletModal) {
-            closeAllModals();
-            console.log('Modal closed via outside click');
-        }
-    });
-
-    // Toggle Between Sign Up and Sign In Modals
-    if (showLogin) {
-        showLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal(loginModal);
-        });
-    }
-
-    if (showSignup) {
-        showSignup.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal(signupModal);
-        });
-    }
-
-    // User Authentication State
-    let currentUser = null;
-
-    function isLoggedIn() {
-        return currentUser !== null;
-    }
-
-    function updateUIForUser(user) {
-        currentUser = user;
-        if (user) {
-            if (signInBtn) signInBtn.style.display = 'none';
-            if (signUpBtn) signUpBtn.style.display = 'none';
-            if (userDropdown) {
-                const userName = user.displayName || user.email.split('@')[0];
-                document.getElementById('userName').textContent = userName;
-                document.getElementById('userInitial').textContent = userName.charAt(0).toUpperCase();
-                document.getElementById('dashboardName').textContent = userName;
-                document.getElementById('dashboardEmail').textContent = user.email;
-                console.log('User logged in:', userName);
-            }
-        } else {
-            if (signInBtn) signInBtn.style.display = 'inline-block';
-            if (signUpBtn) signUpBtn.style.display = 'inline-block';
-            if (userDropdown) userDropdown.style.display = 'none';
-            console.log('No user logged in');
-        }
-    }
-
-    // Firebase Auth State Listener
-    if (auth) {
-        auth.onAuthStateChanged(user => {
-            updateUIForUser(user);
+            // Initialize Dashboard Visibility
             const dashboard = document.getElementById('dashboard');
             if (dashboard) {
-                dashboard.style.display = user ? 'block' : 'none';
+                dashboard.style.display = 'none';
             }
         });
-    }
-
-    // Sign Up Form Submission
-    if (signupForm) {
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const name = document.getElementById('signupName').value;
-
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                await userCredential.user.updateProfile({ displayName: name });
-                closeAllModals();
-                alert('Sign up successful! Welcome to AfriChain.');
-                console.log('User signed up:', email);
-            } catch (error) {
-                alert(`Sign up failed: ${error.message}`);
-                console.error('Sign up error:', error);
-            }
-        });
-    }
-
-    // Sign In Form Submission
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                closeAllModals();
-                alert('Sign in successful!');
-                console.log('User signed in:', email);
-            } catch (error) {
-                alert(`Sign in failed: ${error.message}`);
-                console.error('Sign in error:', error);
-            }
-        });
-    }
-
-    // Google Sign Up/Login
-    if (googleSignup && googleLogin) {
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        googleSignup.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await auth.signInWithPopup(provider);
-                closeAllModals();
-                alert('Signed up with Google successfully!');
-                console.log('Google sign up successful');
-            } catch (error) {
-                alert(`Google sign up failed: ${error.message}`);
-                console.error('Google sign up error:', error);
-            }
-        });
-
-        googleLogin.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await auth.signInWithPopup(provider);
-                closeAllModals();
-                alert('Signed in with Google successfully!');
-                console.log('Google sign in successful');
-            } catch (error) {
-                alert(`Google sign in failed: ${error.message}`);
-                console.error('Google sign in error:', error);
-            }
-        });
-    }
-
-    // Logout
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await auth.signOut();
-                closeAllModals();
-                alert('Logged out successfully.');
-                console.log('User logged out');
-            } catch (error) {
-                alert(`Logout failed: ${error.message}`);
-                console.error('Logout error:', error);
-            }
-        });
-    }
-
-    // Wallet Connection Simulation
-    walletOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            const walletType = option.dataset.wallet;
-            walletStatus.textContent = `Connecting to ${walletType}...`;
-            walletStatus.className = 'wallet-status';
-
-            setTimeout(() => {
-                // Simulate wallet connection
-                const success = Math.random() > 0.2; // 80% success rate for demo
-                if (success) {
-                    walletStatus.textContent = `Connected to ${walletType}!`;
-                    walletStatus.className = 'wallet-status success';
-                    console.log(`Wallet connected: ${walletType}`);
-                    setTimeout(() => closeAllModals(), 1500);
-                } else {
-                    walletStatus.textContent = `Failed to connect to ${walletType}. Please try again.`;
-                    walletStatus.className = 'wallet-status error';
-                    console.error(`Wallet connection failed: ${walletType}`);
-                }
-            }, 1000);
-        });
-    });
-
-    // Contact Form Submission
-    if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-
-            // Simulate form submission
-            console.log('Contact form submitted:', { name, email, subject, message });
-            alert('Message sent successfully! We will get back to you soon.');
-            contactForm.reset();
-        });
-    }
-
-    // Newsletter Form Submission
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = newsletterForm.querySelector('input').value;
-            console.log('Newsletter subscription:', email);
-            alert('Subscribed successfully! Thank you for joining our newsletter.');
-            newsletterForm.reset();
-        });
-    }
-
-    // Social Links
-    document.querySelectorAll('.social-links a').forEach(link => {
-        link.addEventListener('click', (e) => {
-            if (!link.href || link.href === '#') {
-                e.preventDefault();
-                console.log('Social link placeholder clicked:', link.querySelector('i').className);
-                alert('This social link is a placeholder. Please update with a valid URL.');
-            } else {
-                console.log('Navigating to social link:', link.href);
-            }
-        });
-    });
-
-    // Particle Background Animation
-    const particleBg = document.querySelectorAll('.particle-bg');
-    particleBg.forEach(bg => {
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.width = `${Math.random() * 3 + 1}px`;
-            particle.style.height = particle.style.width;
-            particle.style.left = `${Math.random() * 100}%`;
-            particle.style.top = `${Math.random() * 100}%`;
-            particle.style.animationDelay = `${Math.random() * 5}s`;
-            bg.appendChild(particle);
-        }
-    });
-
-    // Initialize Dashboard Visibility
-    const dashboard = document.getElementById('dashboard');
-    if (dashboard) {
-        dashboard.style.display = 'none';
-    }
+    };
+    script.onerror = () => {
+        console.error('Failed to load firebase-config.js');
+        alert('Error loading Firebase configuration. Please check your setup.');
+    };
+    document.head.appendChild(script);
 </script>
 </body>
 </html>
-
