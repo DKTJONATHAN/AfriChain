@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1218,30 +1219,175 @@
                 font-size: 2.5rem;
             }
         }
+
+        /* Auth Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 18, 0.9);
+    backdrop-filter: blur(5px);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: var(--dark);
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--secondary);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: var(--light);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--accent);
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    color: rgba(240, 240, 248, 0.7);
+}
+
+.auth-switch a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* User Dropdown Styles */
+.user-dropdown {
+    display: none;
+    position: fixed;
+    top: 90px;
+    right: 30px;
+    background-color: var(--dark);
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    z-index: 1001;
+    box-shadow: 0 5px 15px rgba(110, 68, 255, 0.2);
+}
+
+.user-info {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(110, 68, 255, 0.2);
+}
+
+#userInitial {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    color: var(--light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.dropdown-menu {
+    padding: 10px 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: var(--light);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: rgba(110, 68, 255, 0.1);
+    color: var(--secondary);
+}
+
+/* Auth Button in Nav */
+.auth-btn {
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    color: var(--light);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 20px;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(110, 68, 255, 0.4);
+}
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="container">
-            <nav class="navbar">
-                <a href="#" class="logo">
-                    <i class="fas fa-link"></i>
-                    <span>AfriChain</span>
-                </a>
-                
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#token">Token</a></li>
-                    <li><a href="#team">Team</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
+         <nav class="navbar">
+    <a href="#" class="logo">
+        <i class="fas fa-link"></i>
+        <span>AfriChain</span>
+    </a>
+    
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#token">Token</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li>
+            <button class="auth-btn" id="authBtn">Sign In</button>
+        </li>
+    </ul>
+</nav>
         </div>
     </header>
     
@@ -1579,6 +1725,60 @@
             </div>
         </div>
     </section>
+    <!-- Sign Up Modal -->
+<div class="modal" id="signupModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Create Account</h2>
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="signupName">Full Name</label>
+                <input type="text" id="signupName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" name="password" required minlength="8">
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
+    </div>
+</div>
+
+<!-- Sign In Modal -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Welcome Back</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+        </form>
+        <p class="auth-switch">Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
+    </div>
+</div>
+
+<!-- User Profile Dropdown (will be shown when logged in) -->
+<div class="user-dropdown" id="userDropdown">
+    <div class="user-info">
+        <span id="userInitial"></span>
+        <span id="userName"></span>
+    </div>
+    <div class="dropdown-menu">
+        <a href="#" id="logoutBtn">Logout</a>
+    </div>
+</div>
     
     <!-- Footer -->
     <footer>
@@ -1647,120 +1847,307 @@
     
     <!-- JavaScript -->
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
+    // Mobile Menu Toggle
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const navLinks = document.getElementById('navLinks');
+
+mobileMenuBtn.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+        ? '<i class="fas fa-times"></i>' 
+        : '<i class="fas fa-bars"></i>';
+});
+
+// Smooth Scrolling for Anchor Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
         
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
+        if (navLinks.classList.contains('active')) {
+            navLinks.classList.remove('active');
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+        
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+
+// Auth Modal Handling
+const authBtn = document.getElementById('authBtn');
+const signupModal = document.getElementById('signupModal');
+const loginModal = document.getElementById('loginModal');
+const showLogin = document.getElementById('showLogin');
+const showSignup = document.getElementById('showSignup');
+const closeBtns = document.querySelectorAll('.close-btn');
+const userDropdown = document.getElementById('userDropdown');
+const logoutBtn = document.getElementById('logoutBtn');
+
+// Show modals
+authBtn.addEventListener('click', () => {
+    loginModal.style.display = 'block';
+});
+
+showSignup.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginModal.style.display = 'none';
+    signupModal.style.display = 'block';
+});
+
+showLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    signupModal.style.display = 'none';
+    loginModal.style.display = 'block';
+});
+
+// Close modals
+closeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        signupModal.style.display = 'none';
+        loginModal.style.display = 'none';
+    });
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === signupModal || e.target === loginModal) {
+        signupModal.style.display = 'none';
+        loginModal.style.display = 'none';
+    }
+});
+
+// Toggle user dropdown
+authBtn.addEventListener('click', (e) => {
+    if (isLoggedIn()) {
+        e.preventDefault();
+        userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+    }
+});
+
+// Close dropdown when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target !== authBtn && e.target !== userDropdown && !userDropdown.contains(e.target)) {
+        userDropdown.style.display = 'none';
+    }
+});
+
+// Check if user is logged in on page load
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuthStatus();
+});
+
+// Check authentication status
+function checkAuthStatus() {
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Verify token (in a real app, you'd verify with the server)
+        try {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            updateUIForLoggedInUser(userData);
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+            logout();
+        }
+    }
+}
+
+// Update UI for logged in user
+function updateUIForLoggedInUser(userData) {
+    authBtn.textContent = userData.name.split(' ')[0];
+    document.getElementById('userName').textContent = userData.name;
+    document.getElementById('userInitial').textContent = userData.name.charAt(0).toUpperCase();
+    userDropdown.style.display = 'none';
+}
+
+// Check if user is logged in
+function isLoggedIn() {
+    return !!localStorage.getItem('token');
+}
+
+// Signup form submission
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    
+    try {
+        const response = await fetch('http://localhost:5000/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, password })
         });
         
-        // Smooth Scrolling for Anchor Links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                }
-                
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
+        const data = await response.json();
         
-        // Animate Stats Counters
-        const animateCounters = () => {
-            const counters = document.querySelectorAll('.stat-number');
-            const speed = 200;
+        if (response.ok) {
+            // Save token and user data
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userData', JSON.stringify({ 
+                userId: data.userId, 
+                name: data.name 
+            }));
             
-            counters.forEach(counter => {
-                const target = parseInt(counter.textContent.replace(/[^0-9]/g, ''));
-                const suffix = counter.textContent.replace(/[0-9]/g, '');
-                let count = 0;
-                
-                const updateCount = () => {
-                    const increment = target / speed;
-                    
-                    if (count < target) {
-                        count += increment;
-                        counter.textContent = Math.floor(count) + suffix;
-                        setTimeout(updateCount, 1);
-                    } else {
-                        counter.textContent = target + suffix;
-                    }
-                };
-                
-                updateCount();
-            });
-        };
-        
-        // Intersection Observer for Animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (entry.target.id === 'transactions') {
-                        animateCounters();
-                    }
-                    entry.target.classList.add('animate');
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        document.querySelectorAll('.stat-number').forEach(el => {
-            observer.observe(el);
-        });
-        
-        // Web3 Wallet Connection
-        const connectWallet = document.getElementById('connectWallet');
-        
-        connectWallet.addEventListener('click', async () => {
-            try {
-                // Check if Web3 is installed
-                if (window.ethereum) {
-                    // Request account access
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const account = accounts[0];
-                    
-                    // Update button text
-                    connectWallet.innerHTML = `<i class="fas fa-wallet"></i> <span>${account.substring(0, 6)}...${account.substring(account.length - 4)}</span>`;
-                    
-                    // You can now interact with the user's wallet
-                    console.log('Connected account:', account);
-                } else {
-                    alert('Please install MetaMask or another Web3 provider to connect your wallet.');
-                }
-            } catch (error) {
-                console.error('Error connecting wallet:', error);
-            }
-        });
-        
-        // Form Submission
-        const contactForm = document.getElementById('contactForm');
-        
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+            // Update UI
+            updateUIForLoggedInUser({ name: data.name });
             
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // Here you would typically send the form data to a server
-            console.log('Form submitted:', { name, email, subject, message });
+            // Close modal
+            signupModal.style.display = 'none';
             
             // Show success message
-            alert('Thank you for your message! We will get back to you soon.');
-            
-            // Reset form
-            contactForm.reset();
+            alert('Account created successfully!');
+        } else {
+            alert(data.message || 'Error creating account');
+        }
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('Error connecting to server');
+    }
+});
+
+// Login form submission
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    try {
+        const response = await fetch('http://localhost:5000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
         });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Save token and user data
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userData', JSON.stringify({ 
+                userId: data.userId, 
+                name: data.name 
+            }));
+            
+            // Update UI
+            updateUIForLoggedInUser({ name: data.name });
+            
+            // Close modal
+            loginModal.style.display = 'none';
+        } else {
+            alert(data.message || 'Invalid credentials');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Error connecting to server');
+    }
+});
+
+// Logout
+logoutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+});
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    authBtn.textContent = 'Sign In';
+    userDropdown.style.display = 'none';
+}
+
+// Animate Stats Counters
+const animateCounters = () => {
+    const counters = document.querySelectorAll('.stat-number');
+    const speed = 200;
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.textContent.replace(/[^0-9]/g, ''));
+        const suffix = counter.textContent.replace(/[0-9]/g, '');
+        let count = 0;
+        
+        const updateCount = () => {
+            const increment = target / speed;
+            
+            if (count < target) {
+                count += increment;
+                counter.textContent = Math.floor(count) + suffix;
+                setTimeout(updateCount, 1);
+            } else {
+                counter.textContent = target + suffix;
+            }
+        };
+        
+        updateCount();
+    });
+};
+
+// Intersection Observer for Animations
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            if (entry.target.id === 'transactions') {
+                animateCounters();
+            }
+            entry.target.classList.add('animate');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.stat-number').forEach(el => {
+    observer.observe(el);
+});
+
+// Web3 Wallet Connection
+const connectWallet = document.getElementById('connectWallet');
+
+connectWallet.addEventListener('click', async () => {
+    try {
+        // Check if Web3 is installed
+        if (window.ethereum) {
+            // Request account access
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+            
+            // Update button text
+            connectWallet.innerHTML = `<i class="fas fa-wallet"></i> <span>${account.substring(0, 6)}...${account.substring(account.length - 4)}</span>`;
+            
+            // You can now interact with the user's wallet
+            console.log('Connected account:', account);
+        } else {
+            alert('Please install MetaMask or another Web3 provider to connect your wallet.');
+        }
+    } catch (error) {
+        console.error('Error connecting wallet:', error);
+    }
+});
+
+// Form Submission
+const contactForm = document.getElementById('contactForm');
+
+contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Get form values
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    
+    // Here you would typically send the form data to a server
+    console.log('Form submitted:', { name, email, subject, message });
+    
+    // Show success message
+    alert('Thank you for your message! We will get back to you soon.');
+    
+    // Reset form
+    contactForm.reset();
+});
     </script>
 </body>
 </html>
