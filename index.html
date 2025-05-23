@@ -934,7 +934,7 @@
 /* Wallet Modal Styles */
 .wallet-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 20px;
     margin-bottom: 20px;
 }
@@ -950,15 +950,14 @@
     background: rgba(42, 42, 53, 0.8);
     border: 1px solid rgba(110, 68, 255, 0.4);
     border-radius: 15px;
-    padding: 20px;
-    text-align: center;
+    padding: 10px; /* Reduced padding to maximize image space */
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(110, 68, 255, 0.2);
     width: 100%;
-    aspect-ratio: 1 / 1; /* Ensure square container for images */
+    aspect-ratio: 1 / 1; /* Keep square container */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -973,16 +972,15 @@
 
 .wallet-option img {
     width: 100%;
-    max-width: 120px;
-    height: auto;
-    object-fit: contain;
-    margin: 0;
+    height: 100%;
+    object-fit: cover; /* Changed to cover to fill container */
+    border-radius: 10px; /* Slight rounding to match container */
     filter: drop-shadow(0 0 5px rgba(110, 68, 255, 0.3));
     transition: transform 0.3s ease;
 }
 
 .wallet-option:hover img {
-    transform: scale(1.1);
+    transform: scale(1.05); /* Slightly reduced scale for smoother effect */
 }
 
 .wallet-name {
