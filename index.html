@@ -931,6 +931,95 @@
     text-decoration: underline;
     text-shadow: 0 0 10px rgba(255, 77, 158, 0.5);
 }
+        /* Social Login Styles */
+.social-login {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.social-login-text {
+    color: rgba(240, 240, 248, 0.7);
+    font-size: 1rem;
+    margin-bottom: 15px;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.social-login-text::before,
+.social-login-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: rgba(110, 68, 255, 0.3);
+}
+
+.social-login-text::before {
+    left: 10px;
+}
+
+.social-login-text::after {
+    right: 10px;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 12px 20px;
+    background: rgba(42, 42, 53, 0.8);
+    border: 1px solid rgba(110, 68, 255, 0.4);
+    border-radius: 10px;
+    color: var(--light);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-social i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.btn-social:hover {
+    transform: translateY(-3px);
+    border-color: var(--secondary);
+    background: rgba(42, 42, 53, 1);
+    box-shadow: 0 8px 25px rgba(15, 240, 252, 0.5);
+}
+
+#googleSignup,
+#googleLogin {
+    background: linear-gradient(45deg, #4285f4, #34a853);
+}
+
+#facebookSignup,
+#facebookLogin {
+    background: linear-gradient(45deg, #3b5998, #8b9dc3);
+}
+
+#googleSignup:hover,
+#googleLogin:hover {
+    background: linear-gradient(45deg, #34a853, #4285f4);
+}
+
+#facebookSignup:hover,
+#facebookLogin:hover {
+    background: linear-gradient(45deg, #8b9dc3, #3b5998);
+}
 /* Wallet Modal Styles */
 .wallet-grid {
     display: grid;
@@ -1410,6 +1499,9 @@
             }
         }
     </style>
+    <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -1705,7 +1797,7 @@
         </div>
     </section>
 
- <!-- Sign Up Modal -->
+<!-- Sign Up Modal -->
 <div class="modal" id="signupModal">
     <div class="modal-content">
         <span class="close-btn"><i class="fas fa-times"></i></span>
@@ -1735,15 +1827,22 @@
                     <input type="password" id="signupPassword" name="password" required minlength="8" placeholder="Create a password">
                 </div>
             </div>
-             <div class="form-group">
-                <label for="signupPassword">Confirm Password</label>
+            <div class="form-group">
+                <label for="signupConfirmPassword">Confirm Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="signupPassword" name="password" required minlength="8" placeholder="Create a password">
+                    <input type="password" id="signupConfirmPassword" name="confirmPassword" required minlength="8" placeholder="Confirm your password">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Sign Up</button>
         </form>
+        <div class="social-login">
+            <p class="social-login-text">Or sign up with</p>
+            <div class="social-buttons">
+                <button class="btn btn-social" id="googleSignup"><i class="fab fa-google"></i> Google</button>
+                <button class="btn btn-social" id="facebookSignup"><i class="fab fa-facebook-f"></i> Facebook</button>
+            </div>
+        </div>
         <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
         <div class="particle-bg"></div>
     </div>
@@ -1774,6 +1873,13 @@
             </div>
             <button type="submit" class="btn btn-primary">Sign In</button>
         </form>
+        <div class="social-login">
+            <p class="social-login-text">Or sign in with</p>
+            <div class="social-buttons">
+                <button class="btn btn-social" id="googleLogin"><i class="fab fa-google"></i> Google</button>
+                <button class="btn btn-social" id="facebookLogin"><i class="fab fa-facebook-f"></i> Facebook</button>
+            </div>
+        </div>
         <p class="auth-switch">Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
         <div class="particle-bg"></div>
     </div>
@@ -1878,7 +1984,25 @@
 </div>
 
     <!-- JavaScript -->
-  <script>
+  <script>// Firebase Configuration (Replace with your Firebase project config)
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+try {
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    console.log('Firebase initialized');
+} catch (error) {
+    console.error('Firebase initialization error:', error);
+}
+
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.getElementById('navLinks');
@@ -1897,22 +2021,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
         console.log('Anchor link clicked:', this.getAttribute('href'));
-        if (navLinks.classList.contains('active')) {
+        if (navLinks && navLinks.classList.contains('active')) {
             navLinks.classList.remove('active');
-            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            if (mobileMenuBtn) mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
         }
         const targetId = this.getAttribute('href');
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth' });
-            // Show/hide dashboard based on navigation
             const dashboard = document.getElementById('dashboard');
-            if (targetId === '#dashboard') {
-                document.querySelectorAll('.section:not(#dashboard)').forEach(section => section.style.display = 'none');
-                dashboard.style.display = 'block';
-            } else {
-                dashboard.style.display = 'none';
-                document.querySelectorAll('.section:not(#dashboard)').forEach(section => section.style.display = 'block');
+            if (dashboard) {
+                if (targetId === '#dashboard') {
+                    document.querySelectorAll('.section:not(#dashboard)').forEach(section => section.style.display = 'none');
+                    dashboard.style.display = 'block';
+                } else {
+                    dashboard.style.display = 'none';
+                    document.querySelectorAll('.section:not(#dashboard)').forEach(section => section.style.display = 'block');
+                }
             }
         } else {
             console.error('Target element not found:', targetId);
@@ -1958,7 +2083,7 @@ function addTiltEffect(modal) {
     });
 }
 
-// Modal Handling (Sign-In, Sign-Up, Wallet)
+// Modal Handling
 const signInBtn = document.getElementById('signInBtn');
 const signUpBtn = document.getElementById('signUpBtn');
 const connectWalletBtn = document.getElementById('connectWalletBtn');
@@ -1975,13 +2100,11 @@ const profileLink = document.getElementById('profileLink');
 const walletOptions = walletModal?.querySelectorAll('.wallet-option');
 const walletStatus = document.getElementById('walletStatus');
 
-// Debugging: Verify elements
 console.log('Elements:', {
     signInBtn, signUpBtn, connectWalletBtn, floatingWalletBtn, signupModal, loginModal, walletModal,
     showLogin, showSignup, closeBtns, userDropdown, logoutBtn, profileLink, walletOptions, walletStatus
 });
 
-// Function to close all modals
 function closeAllModals() {
     if (signupModal) signupModal.style.display = 'none';
     if (loginModal) loginModal.style.display = 'none';
@@ -1990,7 +2113,6 @@ function closeAllModals() {
     console.log('All modals closed');
 }
 
-// Function to open a specific modal
 function openModal(modal) {
     closeAllModals();
     if (modal) {
@@ -2008,13 +2130,13 @@ if (signInBtn) {
         console.log('Sign In button clicked');
         if (isLoggedIn()) {
             console.log('User is logged in, toggling dropdown');
-            userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+            if (userDropdown) {
+                userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+            }
         } else {
             openModal(loginModal);
         }
     });
-} else {
-    console.error('Sign In button not found');
 }
 
 // Sign Up Button
@@ -2024,11 +2146,9 @@ if (signUpBtn) {
         console.log('Sign Up button clicked');
         openModal(signupModal);
     });
-} else {
-    console.error('Sign Up button not found');
 }
 
-// Connect Wallet Buttons (Navigation and Floating)
+// Connect Wallet Buttons
 function handleWalletConnect(e) {
     e.preventDefault();
     console.log('Wallet connect button clicked:', e.target.id);
@@ -2039,17 +2159,8 @@ function handleWalletConnect(e) {
     }
 }
 
-if (connectWalletBtn) {
-    connectWalletBtn.addEventListener('click', handleWalletConnect);
-} else {
-    console.error('Navigation Connect Wallet button not found');
-}
-
-if (floatingWalletBtn) {
-    floatingWalletBtn.addEventListener('click', handleWalletConnect);
-} else {
-    console.error('Floating Connect Wallet button not found');
-}
+if (connectWalletBtn) connectWalletBtn.addEventListener('click', handleWalletConnect);
+if (floatingWalletBtn) floatingWalletBtn.addEventListener('click', handleWalletConnect);
 
 // Modal Switching
 if (showSignup) {
@@ -2058,8 +2169,6 @@ if (showSignup) {
         console.log('Show Sign Up link clicked');
         openModal(signupModal);
     });
-} else {
-    console.error('Show Sign Up link not found');
 }
 
 if (showLogin) {
@@ -2068,8 +2177,6 @@ if (showLogin) {
         console.log('Show Sign In link clicked');
         openModal(loginModal);
     });
-} else {
-    console.error('Show Sign In link not found');
 }
 
 // Close Buttons
@@ -2090,7 +2197,7 @@ window.addEventListener('click', (e) => {
 
 // Close dropdown on outside click
 window.addEventListener('click', (e) => {
-    if (e.target !== signInBtn && e.target !== userDropdown && userDropdown && !userDropdown.contains(e.target)) {
+    if (userDropdown && e.target !== signInBtn && e.target !== userDropdown && !userDropdown.contains(e.target)) {
         userDropdown.style.display = 'none';
         console.log('Closed user dropdown');
     }
@@ -2104,14 +2211,12 @@ if (walletOptions && walletStatus) {
             console.log(`Wallet option clicked: ${walletType}`);
             walletStatus.textContent = 'Connecting...';
             walletStatus.className = 'wallet-status';
-
             try {
                 if (walletType === 'metamask' && window.ethereum) {
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     const account = accounts[0];
                     walletStatus.textContent = `Connected: ${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
                     walletStatus.className = 'wallet-status success';
-                    // Update both buttons
                     if (connectWalletBtn) {
                         connectWalletBtn.innerHTML = `<i class="fas fa-wallet"></i> ${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
                     }
@@ -2119,9 +2224,7 @@ if (walletOptions && walletStatus) {
                         floatingWalletBtn.innerHTML = `<i class="fas fa-wallet"></i> <span>${account.substring(0, 6)}...${account.substring(account.length - 4)}</span>`;
                     }
                     console.log(`Connected MetaMask: ${account}`);
-                    setTimeout(() => {
-                        closeAllModals();
-                    }, 1500);
+                    setTimeout(() => closeAllModals(), 1500);
                 } else {
                     walletStatus.textContent = `Please install ${walletType.charAt(0).toUpperCase() + walletType.slice(1)} to connect.`;
                     walletStatus.className = 'wallet-status error';
@@ -2134,16 +2237,9 @@ if (walletOptions && walletStatus) {
             }
         });
     });
-} else {
-    console.error('Wallet options or status element not found');
 }
 
 // Authentication Logic
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Checking auth status on load');
-    checkAuthStatus();
-});
-
 function checkAuthStatus() {
     const token = localStorage.getItem('token');
     if (token) {
@@ -2165,7 +2261,6 @@ function updateUIForLoggedInUser(userData) {
     if (userName) userName.textContent = userData.name;
     if (userInitial) userInitial.textContent = userData.name.charAt(0).toUpperCase();
     if (userDropdown) userDropdown.style.display = 'none';
-    // Populate dashboard form
     const dashboardName = document.getElementById('dashboardName');
     const dashboardEmail = document.getElementById('dashboardEmail');
     if (dashboardName) dashboardName.value = userData.name;
@@ -2177,6 +2272,81 @@ function isLoggedIn() {
     return !!localStorage.getItem('token');
 }
 
+// Handle Social Login
+async function handleSocialLogin(provider) {
+    try {
+        let authProvider;
+        if (provider === 'google') {
+            authProvider = new firebase.auth.GoogleAuthProvider();
+        } else if (provider === 'facebook') {
+            authProvider = new firebase.auth.FacebookAuthProvider();
+        } else {
+            throw new Error('Unsupported provider');
+        }
+        const result = await auth.signInWithPopup(authProvider);
+        const user = result.user;
+        const idToken = await user.getIdToken();
+        console.log(`Social login successful: ${provider}`, user.displayName);
+
+        const response = await fetch('http://localhost:5000/api/social-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken, provider })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userData', JSON.stringify({ userId: data.userId, name: data.name, email: data.email }));
+            updateUIForLoggedInUser({ name: data.name, email: data.email });
+            closeAllModals();
+            alert(`Welcome to AfriChain, ${data.name}!`);
+        } else {
+            alert(data.message || 'Social login failed');
+        }
+    } catch (error) {
+        console.error(`Social login error (${provider}):`, error);
+        alert(`Error during ${provider} login: ${error.message}`);
+    }
+}
+
+// Social Login Buttons
+const googleSignup = document.getElementById('googleSignup');
+const facebookSignup = document.getElementById('facebookSignup');
+const googleLogin = document.getElementById('googleLogin');
+const facebookLogin = document.getElementById('facebookLogin');
+
+if (googleSignup) {
+    googleSignup.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Google Signup clicked');
+        handleSocialLogin('google');
+    });
+}
+
+if (facebookSignup) {
+    facebookSignup.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Facebook Signup clicked');
+        handleSocialLogin('facebook');
+    });
+}
+
+if (googleLogin) {
+    googleLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Google Login clicked');
+        handleSocialLogin('google');
+    });
+}
+
+if (facebookLogin) {
+    facebookLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Facebook Login clicked');
+        handleSocialLogin('facebook');
+    });
+}
+
 // Signup Form Submission
 const signupForm = document.getElementById('signupForm');
 if (signupForm) {
@@ -2186,9 +2356,18 @@ if (signupForm) {
         const name = document.getElementById('signupName').value;
         const email = document.getElementById('signupEmail').value;
         const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirmPassword')?.value;
 
-        if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8) {
-            alert('Please provide a valid name, email, and password (minimum 8 characters).');
+        if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert('Please provide a valid name and email.');
+            return;
+        }
+        if (password.length < 8) {
+            alert('Password must be at least 8 characters long.');
+            return;
+        }
+        if (confirmPassword && password !== confirmPassword) {
+            alert('Passwords do not match.');
             return;
         }
 
@@ -2203,7 +2382,7 @@ if (signupForm) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userData', JSON.stringify({ userId: data.userId, name: data.name, email }));
                 updateUIForLoggedInUser({ name: data.name, email });
-                openModal(null); // Close modal
+                closeAllModals();
                 alert(`Welcome to AfriChain, ${data.name}! Your account has been created.`);
             } else {
                 alert(data.message || 'Error creating account');
@@ -2213,8 +2392,6 @@ if (signupForm) {
             alert('Error connecting to server');
         }
     });
-} else {
-    console.error('Signup form not found');
 }
 
 // Login Form Submission
@@ -2242,7 +2419,7 @@ if (loginForm) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userData', JSON.stringify({ userId: data.userId, name: data.name, email }));
                 updateUIForLoggedInUser({ name: data.name, email });
-                openModal(null); // Close modal
+                closeAllModals();
                 alert(`Welcome back, ${data.name}!`);
             } else {
                 alert(data.message || 'Invalid credentials');
@@ -2252,8 +2429,6 @@ if (loginForm) {
             alert('Error connecting to server');
         }
     });
-} else {
-    console.error('Login form not found');
 }
 
 // Dashboard Form Submission
@@ -2297,8 +2472,6 @@ if (dashboardForm) {
             alert('Error connecting to server');
         }
     });
-} else {
-    console.error('Dashboard form not found');
 }
 
 // Logout
@@ -2308,8 +2481,6 @@ if (logoutBtn) {
         console.log('Logout button clicked');
         logout();
     });
-} else {
-    console.error('Logout button not found');
 }
 
 function logout() {
@@ -2342,8 +2513,8 @@ const animateCounters = () => {
     const counters = document.querySelectorAll('.stat-number');
     const speed = 200;
     counters.forEach(counter => {
-        const target = parseInt(counter.textContent.replace(/[^0-9]/g, '')) || 0.1;
-        const suffix = counter.textContent.replace(/[0-9]/g, '');
+        const target = parseFloat(counter.textContent.replace(/[^0-9.]/g, '')) || 0.1;
+        const suffix = counter.textContent.replace(/[0-9.]/g, '');
         let count = 0;
         const updateCount = () => {
             const increment = target / speed;
@@ -2384,9 +2555,13 @@ if (contactForm) {
         alert('Thank you for your message! We will get back to you soon.');
         contactForm.reset();
     });
-} else {
-    console.error('Contact form not found');
 }
+
+// Initialize auth status
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Checking auth status on load');
+    checkAuthStatus();
+});
 </script>
 </body>
 </html>
